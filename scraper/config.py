@@ -171,7 +171,9 @@ def parse_config(data: dict[str, Any]) -> Config:
     if not isinstance(http_raw, dict):
         raise ConfigError("http must be a mapping if set")
     http = HttpSettings(
-        user_agent=http_raw.get("user_agent", HttpSettings.__dataclass_fields__["user_agent"].default),
+        user_agent=http_raw.get(
+            "user_agent", HttpSettings.__dataclass_fields__["user_agent"].default
+        ),
         delay_seconds=float(http_raw.get("delay_seconds", 0.5)),
         retries=int(http_raw.get("retries", 3)),
         timeout_seconds=float(http_raw.get("timeout_seconds", 10.0)),

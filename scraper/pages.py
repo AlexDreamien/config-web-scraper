@@ -18,7 +18,5 @@ def static_urls(source: Source) -> list[str] | None:
     if source.urls:
         return list(source.urls)
     if source.url_template and source.pages:
-        return [
-            source.url_template.replace("{page}", str(p)) for p in source.pages.values()
-        ]
+        return [source.url_template.replace("{page}", str(p)) for p in source.pages.values()]
     return None

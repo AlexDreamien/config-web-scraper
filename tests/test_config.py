@@ -172,10 +172,7 @@ class TestLoad:
     def test_load_from_file(self, tmp_path):
         path = tmp_path / "config.yaml"
         path.write_text(
-            "source:\n"
-            "  urls: ['https://example.com']\n"
-            "fields:\n"
-            "  title: h1\n",
+            "source:\n" "  urls: ['https://example.com']\n" "fields:\n" "  title: h1\n",
             encoding="utf-8",
         )
         cfg = load_config(path)

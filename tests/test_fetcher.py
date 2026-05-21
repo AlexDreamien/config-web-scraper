@@ -5,7 +5,7 @@ import pytest
 import respx
 
 from scraper.config import HttpSettings
-from scraper.fetcher import FetchError, Fetcher
+from scraper.fetcher import Fetcher, FetchError
 
 
 class _FakeClock:
@@ -56,9 +56,11 @@ def test_4xx_does_not_retry():
         return_value=httpx.Response(404, text="missing")
     )
     clock = _FakeClock()
-    with Fetcher(_settings(retries=3), sleeper=clock.sleep, monotonic=clock.monotonic) as f:
-        with pytest.raises(httpx.HTTPStatusError):
-            f.fetch("https://example.com/x")
+    with (
+        Fetcher(_settings(retries=3), sleeper=clock.sleep, monotonic=clock.monotonic) as f,
+        pytest.raises(httpx.HTTPStatusError),
+    ):
+        f.fetch("https://example.com/x")
     assert route.call_count == 1
 
 
@@ -95,18 +97,22 @@ def test_429_is_retried_like_5xx():
 def test_repeated_5xx_raises_fetch_error():
     respx.get("https://example.com/w").mock(return_value=httpx.Response(503))
     clock = _FakeClock()
-    with Fetcher(_settings(retries=2), sleeper=clock.sleep, monotonic=clock.monotonic) as f:
-        with pytest.raises(FetchError, match="after 3 attempts"):
-            f.fetch("https://example.com/w")
+    with (
+        Fetcher(_settings(retries=2), sleeper=clock.sleep, monotonic=clock.monotonic) as f,
+        pytest.raises(FetchError, match="after 3 attempts"),
+    ):
+        f.fetch("https://example.com/w")
 
 
 @respx.mock
 def test_network_error_is_retried_and_then_raised():
     respx.get("https://example.com/n").mock(side_effect=httpx.ConnectError("no route"))
     clock = _FakeClock()
-    with Fetcher(_settings(retries=2), sleeper=clock.sleep, monotonic=clock.monotonic) as f:
-        with pytest.raises(FetchError):
-            f.fetch("https://example.com/n")
+    with (
+        Fetcher(_settings(retries=2), sleeper=clock.sleep, monotonic=clock.monotonic) as f,
+        pytest.raises(FetchError),
+    ):
+        f.fetch("https://example.com/n")
     # 3 attempts -> 2 backoffs
     assert clock.sleep_calls == [0.5, 1.0]
 

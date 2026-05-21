@@ -33,14 +33,17 @@ def main(verbose: int) -> None:
 @main.command()
 @click.argument("config_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     type=click.Path(dir_okay=False, path_type=Path),
     required=True,
     help="Output file path. Format is inferred from the extension (.csv or .json) "
     "unless --format is given.",
 )
 @click.option(
-    "-f", "--format", "fmt",
+    "-f",
+    "--format",
+    "fmt",
     type=click.Choice(["csv", "json"]),
     default=None,
     help="Override the output format.",

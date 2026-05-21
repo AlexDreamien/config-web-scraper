@@ -8,7 +8,7 @@ from pathlib import Path
 
 from scraper.config import Config
 from scraper.exporter import ExportFormat, export
-from scraper.fetcher import FetchError, Fetcher
+from scraper.fetcher import Fetcher, FetchError
 from scraper.pages import static_urls
 from scraper.parser import extract_items, find_next_page
 
@@ -59,11 +59,12 @@ def run(config: Config, output_path: str | Path, fmt: ExportFormat) -> RunStats:
     export(records, output_path, fmt=fmt, field_names=field_names)
     log.info(
         "Done: %d pages fetched, %d failed, %d records written to %s",
-        pages_fetched, pages_failed, len(records), output_path,
+        pages_fetched,
+        pages_failed,
+        len(records),
+        output_path,
     )
-    return RunStats(
-        pages_fetched=pages_fetched, pages_failed=pages_failed, records=len(records)
-    )
+    return RunStats(pages_fetched=pages_fetched, pages_failed=pages_failed, records=len(records))
 
 
 def _scrape_page(

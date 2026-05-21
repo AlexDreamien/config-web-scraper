@@ -49,9 +49,7 @@ def _no_delay_config(source_block: dict, item_selector="article.product") -> dic
 
 @respx.mock
 def test_explicit_urls_to_csv(tmp_path):
-    respx.get("https://example.com/page1").mock(
-        return_value=httpx.Response(200, text=LISTING_HTML)
-    )
+    respx.get("https://example.com/page1").mock(return_value=httpx.Response(200, text=LISTING_HTML))
     cfg = parse_config(_no_delay_config({"urls": ["https://example.com/page1"]}))
     out = tmp_path / "out.csv"
     stats = run(cfg, out, fmt="csv")
@@ -151,9 +149,7 @@ def test_one_failing_page_is_skipped_in_static_mode(tmp_path):
 
 @respx.mock
 def test_field_order_matches_config(tmp_path):
-    respx.get("https://example.com/x").mock(
-        return_value=httpx.Response(200, text=LISTING_HTML)
-    )
+    respx.get("https://example.com/x").mock(return_value=httpx.Response(200, text=LISTING_HTML))
     cfg = parse_config(
         {
             "source": {"urls": ["https://example.com/x"]},

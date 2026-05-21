@@ -70,7 +70,10 @@ class Fetcher:
                 last_exc = exc
                 log.warning(
                     "Network error fetching %s (attempt %d/%d): %s",
-                    url, attempt + 1, attempts, exc,
+                    url,
+                    attempt + 1,
+                    attempts,
+                    exc,
                 )
             else:
                 self._last_request_at = self._monotonic()
@@ -85,7 +88,10 @@ class Fetcher:
                     )
                     log.warning(
                         "Retryable %d for %s (attempt %d/%d)",
-                        status, url, attempt + 1, attempts,
+                        status,
+                        url,
+                        attempt + 1,
+                        attempts,
                     )
                 else:
                     # Non-retryable (4xx other than 429): bail immediately.
@@ -94,9 +100,7 @@ class Fetcher:
             if attempt + 1 < attempts:
                 self._sleep(_backoff_seconds(attempt))
 
-        raise FetchError(
-            f"Failed to fetch {url} after {attempts} attempts"
-        ) from last_exc
+        raise FetchError(f"Failed to fetch {url} after {attempts} attempts") from last_exc
 
     def _respect_delay(self) -> None:
         if self._last_request_at is None or self._settings.delay_seconds <= 0:
