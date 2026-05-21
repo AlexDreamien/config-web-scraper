@@ -1,0 +1,25 @@
+# Quotes to Scrape — follow the "next" link across pages.
+#
+# Another public scraping sandbox. This config demonstrates the
+# follow-link pagination mode.
+#
+# Run with:
+#   scraper run examples/quotes_follow.yaml -o quotes.json
+
+source:
+  start_url: "https://quotes.toscrape.com/"
+  next_page_selector: "li.next > a"
+  max_pages: 5
+
+item_selector: "div.quote"
+
+fields:
+  text: "span.text"
+  author: "small.author"
+  tags:
+    selector: "div.tags"
+
+http:
+  user_agent: "config-web-scraper-demo/0.1 (+https://github.com/AlexDreamien/config-web-scraper)"
+  delay_seconds: 1.0
+  retries: 2

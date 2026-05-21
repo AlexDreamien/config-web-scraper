@@ -1,0 +1,34 @@
+# Books to Scrape — using a URL template and an explicit page range.
+#
+# This example targets books.toscrape.com, a public sandbox site explicitly
+# designed for learning web scraping. It is stable, has no robots
+# restrictions, and is fine to hit politely.
+#
+# Run with:
+#   scraper run examples/books_template.yaml -o books.csv
+
+source:
+  url_template: "https://books.toscrape.com/catalogue/page-{page}.html"
+  pages:
+    from: 1
+    to: 3
+
+item_selector: "article.product_pod"
+
+fields:
+  title:
+    selector: "h3 > a"
+    attr: title
+  url:
+    selector: "h3 > a"
+    attr: href
+  price: "p.price_color"
+  availability: "p.instock.availability"
+  rating:
+    selector: "p.star-rating"
+    attr: class
+
+http:
+  user_agent: "config-web-scraper-demo/0.1 (+https://github.com/AlexDreamien/config-web-scraper)"
+  delay_seconds: 1.0
+  retries: 2
