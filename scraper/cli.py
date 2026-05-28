@@ -56,7 +56,11 @@ def run(config_path: Path, output: Path, fmt: str | None) -> None:
         click.echo(f"Error: invalid config: {exc}", err=True)
         sys.exit(2)
 
-    chosen_fmt = fmt or infer_format(output)
+    try:
+        chosen_fmt = fmt or infer_format(output)
+    except ValueError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(2)
     stats = run_pipeline(cfg, output, chosen_fmt)
     click.echo(
         f"Wrote {stats.records} record(s) from {stats.pages_fetched} page(s)"

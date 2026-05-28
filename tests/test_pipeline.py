@@ -147,6 +147,34 @@ def test_one_failing_page_is_skipped_in_static_mode(tmp_path):
     assert stats.records == 2  # only the records from the successful page
 
 
+CYCLE_HTML = """
+<html><body>
+  <article class="product">
+    <h3><a href="/book-1" title="Book One">Book One</a></h3>
+    <p class="price">$10.00</p>
+  </article>
+  <a class="next" href="https://example.com/">Next</a>
+</body></html>
+"""
+
+
+@respx.mock
+def test_follow_link_stops_on_cycle(tmp_path):
+    respx.get("https://example.com/").mock(return_value=httpx.Response(200, text=CYCLE_HTML))
+    cfg = parse_config(
+        _no_delay_config(
+            {
+                "start_url": "https://example.com/",
+                "next_page_selector": "a.next",
+            }
+        )
+    )
+    out = tmp_path / "out.json"
+    stats = run(cfg, out, fmt="json")
+    assert stats.pages_fetched == 1
+    assert stats.records == 1
+
+
 @respx.mock
 def test_field_order_matches_config(tmp_path):
     respx.get("https://example.com/x").mock(return_value=httpx.Response(200, text=LISTING_HTML))

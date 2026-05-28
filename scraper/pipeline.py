@@ -43,8 +43,13 @@ def run(config: Config, output_path: str | Path, fmt: ExportFormat) -> RunStats:
             assert url is not None
             sel = config.source.next_page_selector
             assert sel is not None
+            visited_urls: set[str] = set()
             visited = 0
             while url is not None:
+                if url in visited_urls:
+                    log.warning("Pagination cycle detected at %s, stopping", url)
+                    break
+                visited_urls.add(url)
                 ok, html = _scrape_page_with_html(fetcher, url, config, records)
                 if ok:
                     pages_fetched += 1
